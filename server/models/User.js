@@ -1,8 +1,12 @@
-import { Sequelize } from "sequelize";
-import sequelize from "../database/connection.js";
+module.exports = (sequelize, DataTypes) => {
+    const User = sequelize.define("user", {
+        username: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true,
+        },
+        password: { type: DataTypes.STRING, allowNull: false },
+    });
 
-const User = sequelize.define("user", {
-    username: { type: Sequelize.STRING(100), allowNull: false },
-});
-
-export default User;
+    return User;
+};
