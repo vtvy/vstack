@@ -13,14 +13,19 @@ function AddEditPost({ setIsAddEditPost, content }) {
     const handleCreateNewPost = async (data) => {
         setIsUploading(true);
         try {
-            console.log(data);
-            // const res = await postApi.create(data);
-            // if (res.data.status) {
-            //     setIsUploading(false);
-            //     const action = addNewPost(data);
-            //     dispatch(action);
-            //     setIsAddEditPost(false);
-            // }
+            const res = await postApi.create(data);
+            if (res.data.status) {
+                setIsUploading(false);
+                const newPost = {
+                    id: res.data.id,
+                    ...data,
+                    user,
+                    updatedAt: res.data.updatedAt,
+                };
+                const action = addNewPost(newPost);
+                dispatch(action);
+                setIsAddEditPost(false);
+            }
         } catch (error) {
             console.log(error);
         }
@@ -29,21 +34,29 @@ function AddEditPost({ setIsAddEditPost, content }) {
     const handleEditPost = async (data) => {
         setIsUploading(true);
         if (
-            data.get("postText") === content.initialValue.postText &&
-            data.get("language") === content.initialValue.language
+            data.question === content.initialValue.question &&
+            data.language === content.initialValue.language
         ) {
             setIsAddEditPost(false);
         } else {
             try {
-                const res = await postApi.updatePostById(
-                    content.initialValue._id,
-                    data
-                );
-                if (res.data.success) {
-                    const updatedPost = res.data.updatedPost;
+                const updatedData = {
+                    ...data,
+                    id: content.initialValue.id,
+                };
+                const res = await postApi.update(updatedData);
+                if (res.data.status) {
+                    const updatedPost = {
+                        ...updatedData,
+                        updatedAt: content.initialValue.updatedAt,
+                        user,
+                    };
                     const action = updatePost(updatedPost);
                     dispatch(action);
                     setIsAddEditPost(false);
+                    setIsUploading(false);
+                } else {
+                    alert(res.data.error);
                 }
             } catch (error) {
                 alert(error);

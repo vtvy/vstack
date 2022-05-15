@@ -30,7 +30,7 @@ export const login = createAsyncThunk("user/login", async (payload) => {
             const user = resUser.data.user;
             return { user, isLoggedIn: true };
         } else {
-            alert(res.data.message);
+            alert(res.data.error);
             return { user: null, isLoggedIn: false };
         }
     } catch (error) {

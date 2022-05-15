@@ -5,8 +5,9 @@ const postRoutes = require("express").Router();
 // Create question
 postRoutes.post("/create", validateToken, postController.create);
 // Get all posts
-postRoutes.get("/", postController.get);
+postRoutes.get("/", validateToken, postController.get);
 // Get a post
-postRoutes.get("/:id", postController.getOne);
-
+postRoutes.get("/:id", validateToken, postController.getOne);
+// Update a post
+postRoutes.put("/update", validateToken, postController.update);
 module.exports = postRoutes;

@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
     const Vote = sequelize.define("vote", {
-        value: {
-            type: DataTypes.INTEGER,
+        upVote: {
+            type: DataTypes.BOOLEAN,
             allowNull: false,
         },
     });

@@ -28,8 +28,8 @@ const postApi = {
         return res;
     },
 
-    async updatePostById(id, data) {
-        const url = `/question/update/${id}`;
+    async update(data) {
+        const url = "/question/update";
         const res = await axiosClient.put(url, data, {
             headers: { accessToken },
         });

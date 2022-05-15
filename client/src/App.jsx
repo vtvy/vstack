@@ -6,16 +6,11 @@ import Header from "./components/Header";
 import Container from "./components/Main";
 import ProtectedRoutes from "./components/ProtectedRoutes";
 import PublicRoutes from "./components/PublicRoutes";
-import SidebarLeft from "./components/SidebarLeft";
-import SidebarRight from "./components/SidebarRight";
-import Spinner from "./components/Spinner";
 import Auth from "./features/Auth";
 import { logOut, setUser } from "./features/Auth/userSlice";
 import Home from "./features/Home";
-import Photo from "./features/Photo";
 import AddEditPost from "./features/Post/Pages/AddEditPost";
 import Profile from "./features/Profile";
-import ListOfSearch from "./features/Search/page/ListOfSearch";
 import useDarkMode from "./Hooks/useDarkMode";
 export const ModalContext = createContext();
 export const ThemeContext = createContext();
@@ -32,7 +27,6 @@ function App() {
         var mounted = true;
         const loginUser = async () => {
             const res = await userApi.getUser();
-            console.log(res.data);
             if (res.data.status) {
                 const action = setUser(res.data.user);
                 dispatch(action);
@@ -48,7 +42,6 @@ function App() {
     }, []);
 
     //handleModal
-    const [toggleMenu, setToggleMenu] = useState(false);
     const [modal, setModal] = useState({
         isOpen: false,
         type: null,
@@ -56,36 +49,14 @@ function App() {
         content: {},
     });
 
-    const [searchInput, setSearchInput] = useState();
-
-    useEffect(() => {
-        const handleResizeWindow = () => {
-            if (window.innerWidth <= 1280) {
-                setToggleMenu(false);
-            } else {
-                setToggleMenu(true);
-            }
-        };
-        window.addEventListener("resize", handleResizeWindow);
-        return () => {
-            window.addEventListener("resize", handleResizeWindow);
-        };
-    }, []);
     return (
         <ModalContext.Provider value={setModal}>
             <div className="App flex flex-col min-h-screen h-full bg-slate-300 dark:bg-indigo-1050 scrollbar">
                 {isLoggedIn && (
                     <>
                         <ThemeContext.Provider value={toggleDarkMode}>
-                            <SearchContext.Provider value={setSearchInput}>
-                                <Header
-                                    setToggleMenu={setToggleMenu}
-                                    toggleMenu={toggleMenu}
-                                />
-                            </SearchContext.Provider>
+                            <Header />
                         </ThemeContext.Provider>
-                        <SidebarLeft toggleMenu={toggleMenu} />
-                        <SidebarRight toggleMenu={toggleMenu} />
                     </>
                 )}
 
@@ -109,25 +80,7 @@ function App() {
                     <Route element={<ProtectedRoutes isLogged={isLoggedIn} />}>
                         <Route path="/" element={<Container />}>
                             <Route path="/" element={<Home />} />
-                            <Route path="/photo" element={<Photo />} />
-                            <Route
-                                path="/profile/:id/*"
-                                element={<Profile />}
-                            />
-                            <Route
-                                path="/people"
-                                element={<Container type="people" />}
-                            />
-                            <Route
-                                path="/setting"
-                                element={<Container type="setting" />}
-                            />
-                            <Route
-                                path="/search/*"
-                                element={
-                                    <ListOfSearch searchInput={searchInput} />
-                                }
-                            />
+                            <Route path="/profile/:id" element={<Profile />} />
                         </Route>
                     </Route>
                 </Routes>

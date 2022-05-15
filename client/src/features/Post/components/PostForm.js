@@ -21,47 +21,38 @@ function PostForm({ onSubmit, initialData, isUploading, type }) {
     } = useForm({ mode: "onChange" });
     const onSubmitForm = (data) => {
         if (isValid) {
-            // onSubmit(data);
-            console.log(data);
+            onSubmit(data);
         }
     };
 
     useEffect(() => {
-        if (watch("postText") && watch("language")) {
+        if (watch("question") && watch("language")) {
             setIsValid(true);
         } else setIsValid(false);
-    }, [watch("postText"), watch("language")]);
+    }, [watch("question"), watch("language")]);
 
     return (
         <div className="w-[50rem] relative">
             <CardSection title={`${type} Question`}>
-                <div className="flex items-start">
-                    <div className="ml-4">
-                        <span className="font-bold">{user.username}</span>
-                    </div>
-                    <div className="absolute right-4 top-4 w-16 h-16 rounded-[50%] bg-slate-200 flex items-center justify-center cursor-pointer close-position hover:bg-slate-300">
-                        <i className="fa-solid fa-xmark close-position"></i>
-                    </div>
-                </div>
                 <form
                     className="w-full h-full mt-4 flex flex-col pb-4 "
                     onSubmit={handleSubmit(onSubmitForm)}
                 >
-                    <div className="flex flex-col mt-4 mb-4">
+                    <div className="flex flex-col mt-2 mb-4">
                         <label
                             htmlFor="postContent"
-                            className="text-indigo-600 font-semibold"
+                            className="text-sky-600 mb-4"
                         >
-                            <i className="fas fa-scroll"></i>Question
+                            <i className="fa-solid fa-code "></i> Question
                         </label>
                         <textarea
-                            className=" outline-none resize-none dark:border-indigo-950 rounded-lg bg-white dark:bg-indigo-950 px-6 py-4 h-full"
+                            className="bg-slate-800 text-white h-96 outline-none resize-none dark:border-indigo-950 rounded-lg dark:bg-indigo-950 px-6 py-4"
                             type="text"
                             rows="3"
                             name="content"
                             id="postContent"
-                            defaultValue={initialData.postText || ""}
-                            {...register("postText")}
+                            defaultValue={initialData.question || ""}
+                            {...register("question")}
                             placeholder="Write something..."
                         />
                         {errors.content ? (
@@ -73,11 +64,11 @@ function PostForm({ onSubmit, initialData, isUploading, type }) {
                         )}
                     </div>
                     <div className="flex flex-col mb-8">
-                        <div className="text-indigo-600 font-semibold">
-                            <i className="fas fa-paperclip"></i>Language
+                        <div className="text-sky-600">
+                            <i className="fa-solid fa-question"></i> Language
                         </div>
 
-                        <div className="border border-solid border-slate-300 dark:border-indigo-950 shadow-md flex justify-around rounded-lg bg-white px-6 py-4 h-full focus:outline-indigo-600 dark:bg-indigo-1050">
+                        <div className="flex justify-around rounded-lg bg-white px-6 py-4 h-full focus:outline-indigo-600 dark:bg-indigo-1050">
                             {languageList.map((lang, key) => {
                                 return (
                                     <label
@@ -93,6 +84,9 @@ function PostForm({ onSubmit, initialData, isUploading, type }) {
                                             id={lang}
                                             {...register("language")}
                                             className="form-check-input appearance-none border border-gray-300 rounded-full h-4 w-4 checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain mr-2 cursor-pointer"
+                                            defaultChecked={
+                                                lang == initialData.language
+                                            }
                                         />
                                         {lang}
                                     </label>

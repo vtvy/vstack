@@ -2,11 +2,10 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { logOut } from "../../features/Auth/userSlice";
-import Search from "../../features/Search";
 import useClickOutside from "../../Hooks/useClickOutside";
 import NavbarMenu from "./NavbarMenu";
 
-function Navbar({ setToggleMenu, toggleMenu }) {
+function Navbar() {
     const user = useSelector((state) => state.user.current);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -22,14 +21,6 @@ function Navbar({ setToggleMenu, toggleMenu }) {
     return (
         <div className="h-full w-full flex gap-4 items-center justify-between px-4">
             <div className="flex items-center ">
-                <span
-                    onClick={() => {
-                        setToggleMenu(!toggleMenu);
-                    }}
-                    className="cursor-pointer text-4xl"
-                >
-                    <i className="fas fa-bars dark:text-textColorDark"></i>
-                </span>
                 <div
                     className="mx-4 md:mx-[3.6rem] text-indigo-600 font-bold text-4xl cursor-pointer"
                     onClick={reLoadPage}
@@ -37,7 +28,7 @@ function Navbar({ setToggleMenu, toggleMenu }) {
                     Veta
                 </div>
             </div>
-            <Search />
+
             <div className="flex gap-x-4 items-center">
                 <Link
                     to="/chat"
