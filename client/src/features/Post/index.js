@@ -15,7 +15,7 @@ function Post() {
             setIsOpen: setIsAddPost,
             content: {
                 type: "create",
-                initialValue: { postText: "", postImage: "" },
+                initialValue: { postText: "", language: "" },
             },
         });
     }, [isAddPost]);

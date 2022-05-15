@@ -4,6 +4,9 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
             unique: true,
+            validate: {
+                min: 4,
+            },
         },
         password: { type: DataTypes.STRING, allowNull: false },
     });

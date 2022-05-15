@@ -3,19 +3,18 @@ import StorageKeys from "../constants/storageKeys";
 
 const userApi = {
     register(data) {
-        const url = "auth/register";
+        const url = "user/register";
         return axiosClient.post(url, data);
     },
 
     login(data) {
-        const url = "auth/login";
+        const url = "user/login";
         return axiosClient.post(url, data);
     },
 
     async getUser() {
         const accessToken = localStorage.getItem(StorageKeys.accessToken);
-
-        const url = "/validate";
+        const url = "user/validate";
         const response = await axiosClient.get(url, {
             headers: { accessToken },
         });

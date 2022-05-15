@@ -18,7 +18,14 @@ const userController = {
                     { id: result.id },
                     process.env.ACCESS_TOKEN_CODE
                 );
-                res.json({ status: true, token });
+                res.json({
+                    status: true,
+                    user: {
+                        id: result.id,
+                        username: result.username,
+                    },
+                    token,
+                });
             })
             .catch((e) => {
                 res.json({ status: false, error: "username exist" });
@@ -43,7 +50,14 @@ const userController = {
                             { id: result.dataValues.id },
                             process.env.ACCESS_TOKEN_CODE
                         );
-                        res.json({ status: true, token });
+                        res.json({
+                            status: true,
+                            user: {
+                                id: result.dataValues.id,
+                                username: result.dataValues.username,
+                            },
+                            token,
+                        });
                     } else {
                         res.json({
                             status: false,
@@ -66,7 +80,7 @@ const userController = {
         const { userId } = req.body;
         await User.findOne({
             where: {
-                userId,
+                id: userId,
             },
             attributes: ["username"],
         })
@@ -76,7 +90,14 @@ const userController = {
                         { id: userId },
                         process.env.ACCESS_TOKEN_CODE
                     );
-                    res.json({ status: true, token });
+                    res.json({
+                        status: true,
+                        user: {
+                            id: userId,
+                            username: result.dataValues.username,
+                        },
+                        token,
+                    });
                 } else {
                     res.json({
                         status: false,
@@ -93,7 +114,6 @@ const userController = {
         const { userId, passwd, newPasswd } = req.body;
         await User.findByPk(userId)
             .then((result) => {
-                console.log("69 change:", result);
                 if (result) {
                     const match = bcrypt.compareSync(
                         passwd,
@@ -127,7 +147,6 @@ const userController = {
                 }
             })
             .then((changeResult) => {
-                console.log(changeResult);
                 res.json({ status: true });
             })
             .catch((e) => {

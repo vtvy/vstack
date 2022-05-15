@@ -32,7 +32,8 @@ function App() {
         var mounted = true;
         const loginUser = async () => {
             const res = await userApi.getUser();
-            if (res.data.success) {
+            console.log(res.data);
+            if (res.data.status) {
                 const action = setUser(res.data.user);
                 dispatch(action);
             } else {
@@ -54,6 +55,7 @@ function App() {
         setIsOpen: false,
         content: {},
     });
+
     const [searchInput, setSearchInput] = useState();
 
     useEffect(() => {
@@ -73,17 +75,19 @@ function App() {
         <ModalContext.Provider value={setModal}>
             <div className="App flex flex-col min-h-screen h-full bg-slate-300 dark:bg-indigo-1050 scrollbar">
                 {isLoggedIn && (
-                    <ThemeContext.Provider value={toggleDarkMode}>
-                        <SearchContext.Provider value={setSearchInput}>
-                            <Header
-                                setToggleMenu={setToggleMenu}
-                                toggleMenu={toggleMenu}
-                            />
-                        </SearchContext.Provider>
-                    </ThemeContext.Provider>
+                    <>
+                        <ThemeContext.Provider value={toggleDarkMode}>
+                            <SearchContext.Provider value={setSearchInput}>
+                                <Header
+                                    setToggleMenu={setToggleMenu}
+                                    toggleMenu={toggleMenu}
+                                />
+                            </SearchContext.Provider>
+                        </ThemeContext.Provider>
+                        <SidebarLeft toggleMenu={toggleMenu} />
+                        <SidebarRight toggleMenu={toggleMenu} />
+                    </>
                 )}
-                {isLoggedIn && <SidebarLeft toggleMenu={toggleMenu} />}
-                {isLoggedIn && <SidebarRight toggleMenu={toggleMenu} />}
 
                 {/* modal */}
                 {modal.isOpen && (

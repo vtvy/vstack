@@ -7,6 +7,4 @@ const axiosClient = axios.create({
     },
 });
 
-console.log(process.env);
-
 export default axiosClient;
