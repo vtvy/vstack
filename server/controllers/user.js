@@ -61,6 +61,79 @@ const userController = {
                 res.json({ status: false, error: "username is invalid" });
             });
     },
+
+    validate: async (req, res) => {
+        const { userId } = req.body;
+        await User.findOne({
+            where: {
+                userId,
+            },
+            attributes: ["username"],
+        })
+            .then((result) => {
+                if (result) {
+                    let token = jwt.sign(
+                        { id: userId },
+                        process.env.ACCESS_TOKEN_CODE
+                    );
+                    res.json({ status: true, token });
+                } else {
+                    res.json({
+                        status: false,
+                        error: "invalid user",
+                    });
+                }
+            })
+            .catch((e) => {
+                res.json({ status: false, error: "invalid user" });
+            });
+    },
+
+    update: async (req, res) => {
+        const { userId, passwd, newPasswd } = req.body;
+        await User.findByPk(userId)
+            .then((result) => {
+                console.log("69 change:", result);
+                if (result) {
+                    const match = bcrypt.compareSync(
+                        passwd,
+                        result.dataValues.password
+                    );
+                    return match;
+                } else {
+                    res.json({
+                        status: false,
+                        error: "wrong username or password",
+                    });
+                }
+            })
+            .then(async (match) => {
+                if (match) {
+                    const password = bcrypt.hashSync(newPasswd, saltRounds);
+                    const changeResult = await User.update(
+                        { password },
+                        {
+                            where: {
+                                id: userId,
+                            },
+                        }
+                    );
+                    return changeResult;
+                } else {
+                    res.json({
+                        status: false,
+                        error: "wrong username or password",
+                    });
+                }
+            })
+            .then((changeResult) => {
+                console.log(changeResult);
+                res.json({ status: true });
+            })
+            .catch((e) => {
+                res.json({ status: false, error: "username is invalid" });
+            });
+    },
 };
 
 module.exports = userController;

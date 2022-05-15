@@ -61,6 +61,69 @@ const postController = {
                 res.json({ status: false, error: "something went wrong" });
             });
     },
+
+    update: async (req, res) => {
+        const { userId, question, language, postId } = req.body;
+        if (question || language) {
+            res.json({
+                status: false,
+                error: "you must provide question and language",
+            });
+        }
+
+        await Post.findOne({
+            where: { id: postId, userId },
+        })
+            .then((result) => {
+                if (result) {
+                    return result;
+                } else {
+                    res.json({ status: false, error: "the post is not exist" });
+                }
+            })
+            .then(async (result) => {
+                console.log(result);
+                if (result) {
+                    // await Post.update(
+                    //     { question, language },
+                    //     {
+                    //         where: { id: postId, userId },
+                    //     }
+                    // );
+                }
+            })
+            .catch((e) => {
+                res.json({ status: false, error: "something went wrong" });
+            });
+    },
+
+    delete: async (req, res) => {
+        const { userId, postId } = req.body;
+
+        await Post.findOne({
+            where: { id: postId, userId },
+        })
+            .then((result) => {
+                if (result) {
+                    return result;
+                } else {
+                    res.json({ status: false, error: "the post is not exist" });
+                }
+            })
+            .then(async (result) => {
+                console.log(result);
+                if (result) {
+                    // await Post.delete(
+                    //     {
+                    //         where: { id: postId, userId },
+                    //     }
+                    // );
+                }
+            })
+            .catch((e) => {
+                res.json({ status: false, error: "something went wrong" });
+            });
+    },
 };
 
 module.exports = postController;
