@@ -28,13 +28,14 @@ function PostCard({ post }) {
     //check vote state
     useEffect(() => {
         post.vote.map((eachVote) => {
-            if (eachVote.userId == user.id) {
+            if (eachVote.userId === user.id) {
                 if (eachVote.upVote) {
                     setVoteState(1);
                 } else {
                     setVoteState(-1);
                 }
             }
+            return true;
         });
     }, [post, user, setVoteState]);
 
@@ -49,7 +50,7 @@ function PostCard({ post }) {
                 initialValue: post,
             },
         });
-    }, [isEditPost]);
+    }, [isEditPost, post, setModal]);
 
     //delete post
     const handleDeletePost = async () => {

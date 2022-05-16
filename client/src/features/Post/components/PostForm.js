@@ -1,7 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import Prism from "prismjs";
-import Box from "../../../components/Box";
 import Button from "../../../components/Button";
 import { useForm } from "react-hook-form";
 import ErrorMessage from "../../Auth/components/ErrorMessage";
@@ -10,7 +7,6 @@ import Loading from "../../../components/Loading";
 import languageList from "../../../constants/language";
 
 function PostForm({ onSubmit, initialData, isUploading, type }) {
-    const user = useSelector((state) => state.user.current);
     const [isValid, setIsValid] = useState(false);
 
     const {
@@ -30,7 +26,7 @@ function PostForm({ onSubmit, initialData, isUploading, type }) {
         if (watch("question") && watch("language")) {
             setIsValid(true);
         } else setIsValid(false);
-    }, [watch("question"), watch("language")]);
+    }, [watch()]);
 
     return (
         <div className="w-[50rem] relative">
@@ -86,7 +82,7 @@ function PostForm({ onSubmit, initialData, isUploading, type }) {
                                             {...register("language")}
                                             className="form-check-input appearance-none border border-gray-300 rounded-full h-4 w-4 checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain mr-2 cursor-pointer"
                                             defaultChecked={
-                                                lang == initialData.language
+                                                lang === initialData.language
                                             }
                                         />
                                         {lang}

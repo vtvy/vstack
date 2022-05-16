@@ -22,7 +22,7 @@ function LoginPage() {
                     Login
                 </h1>
                 <span className="inline-block text-2xl text-gray-500">
-                    Enter your username and password to access admin panel.
+                    Enter your username and password.
                 </span>
             </div>
             <LoginForm onSubmit={handleLogin} />

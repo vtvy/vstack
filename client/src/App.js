@@ -11,20 +11,13 @@ import { logOut, setUser } from "./features/Auth/userSlice";
 import Home from "./features/Home";
 import AddEditPost from "./features/Post/Pages/AddEditPost";
 import Profile from "./features/Profile";
-import useDarkMode from "./Hooks/useDarkMode";
 export const ModalContext = createContext();
-export const ThemeContext = createContext();
-export const SearchContext = createContext();
-export const SocketContext = createContext();
 
 function App() {
-    const [isDarkMode, toggleDarkMode] = useDarkMode();
     const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
-    const user = useSelector((state) => state.user.current) || "";
     const dispatch = useDispatch();
 
     useEffect(() => {
-        var mounted = true;
         const loginUser = async () => {
             const res = await userApi.getUser();
             if (res.data.status) {
@@ -36,10 +29,7 @@ function App() {
             }
         };
         loginUser();
-        return () => {
-            mounted = false;
-        };
-    }, []);
+    }, [dispatch]);
 
     //handleModal
     const [modal, setModal] = useState({

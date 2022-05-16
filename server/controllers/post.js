@@ -2,6 +2,7 @@ const db = require("../models");
 
 const User = db.users;
 const Post = db.posts;
+const Comment = db.comments;
 const Vote = db.votes;
 
 const postController = {
@@ -15,8 +16,7 @@ const postController = {
             .then((result) => {
                 res.json({
                     status: true,
-                    id: result.id,
-                    updatedAt: result.updatedAt,
+                    post: result,
                 });
             })
             .catch((e) => {
@@ -33,6 +33,11 @@ const postController = {
                     attributes: ["id", "username"],
                 },
                 {
+                    model: Comment,
+                    as: "comment",
+                    attributes: ["id"],
+                },
+                {
                     model: Vote,
                     as: "vote",
                     attributes: ["id", "upVote", "userId"],
@@ -43,6 +48,7 @@ const postController = {
                 res.json({ status: true, posts: result });
             })
             .catch((e) => {
+                console.log(e);
                 res.json({ status: false, error: "something went wrong" });
             });
     },
@@ -84,19 +90,44 @@ const postController = {
             })
                 .then(async (result) => {
                     if (result) {
-                        return await Post.update(
+                        await Post.update(
                             { question, language },
                             {
                                 where: { id, userId },
                             }
                         );
+                        let newPost = await Post.findOne({
+                            include: [
+                                {
+                                    model: User,
+                                    as: "user",
+                                    attributes: ["id", "username"],
+                                },
+                                {
+                                    model: Comment,
+                                    as: "comment",
+                                    attributes: ["id"],
+                                },
+                                {
+                                    model: Vote,
+                                    as: "vote",
+                                    attributes: ["id", "upVote", "userId"],
+                                },
+                            ],
+                            where: { id },
+                        });
+                        res.json({
+                            status: true,
+                            post: newPost.dataValues,
+                        });
                     } else {
-                        return false;
+                        res.json({
+                            status: false,
+                            error: "the post is not exist",
+                        });
                     }
                 })
-                .then((status) => {
-                    res.json({ status });
-                })
+
                 .catch((e) => {
                     res.json({
                         status: false,
@@ -107,31 +138,77 @@ const postController = {
     },
 
     delete: async (req, res) => {
-        const { userId, postId } = req.body;
+        const postId = req.params.id;
+        const { userId } = req.body;
 
         await Post.findOne({
             where: { id: postId, userId },
         })
-            .then((result) => {
+            .then(async (result) => {
                 if (result) {
-                    return result;
+                    await Comment.destroy({
+                        where: {
+                            postId,
+                        },
+                    });
+                    await Vote.destroy({
+                        where: {
+                            postId,
+                        },
+                    });
+
+                    await Post.destroy({
+                        where: { id: postId, userId },
+                    });
+                    res.json({ status: true });
                 } else {
                     res.json({ status: false, error: "the post is not exist" });
-                }
-            })
-            .then(async (result) => {
-                console.log(result);
-                if (result) {
-                    // await Post.delete(
-                    //     {
-                    //         where: { id: postId, userId },
-                    //     }
-                    // );
                 }
             })
             .catch((e) => {
                 res.json({ status: false, error: "something went wrong" });
             });
+    },
+
+    vote: async (req, res) => {
+        const upvote = 1,
+            devote = -1;
+        const { vote, userId, postId } = req.body;
+        if (vote !== upvote && vote !== devote) {
+            res.json({
+                status: false,
+                error: "you need to provide valid vote value",
+            });
+        } else {
+            var upVoteValue = vote === upvote;
+            await Vote.findOrCreate({
+                where: { userId, postId },
+                defaults: {
+                    upVote: upVoteValue,
+                },
+            })
+                .then(async ([result, created]) => {
+                    if (created) {
+                        res.json({ status: true, vote });
+                    } else if (result.dataValues.upVote == upVoteValue) {
+                        await Vote.destroy({
+                            where: { userId, postId },
+                        });
+                        res.json({ status: true, vote: 0 });
+                    } else {
+                        await Vote.update(
+                            { upVote: upVoteValue },
+                            {
+                                where: { userId, postId },
+                            }
+                        );
+                        res.json({ status: true, vote });
+                    }
+                })
+                .catch((e) => {
+                    res.json({ status: false, error: "something went wrong" });
+                });
+        }
     },
 };
 

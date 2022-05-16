@@ -1,7 +1,6 @@
 const db = require("../models");
 
 const User = db.users;
-const Post = db.posts;
 const Comment = db.comments;
 
 const commentController = {
@@ -21,7 +20,7 @@ const commentController = {
     },
 
     get: async (req, res) => {
-        const { postId } = req.body;
+        const postId = req.params.id;
         await Comment.findAll({
             include: [
                 {
@@ -45,26 +44,20 @@ const commentController = {
 
     update: async (req, res) => {
         const { userId, reply, postId, commentId } = req.body;
-
         await Comment.findOne({
             where: { id: commentId, postId, userId },
         })
-            .then((result) => {
+            .then(async (result) => {
                 if (result) {
-                    return result;
+                    await Comment.update(
+                        { reply },
+                        {
+                            where: { id: commentId, postId, userId },
+                        }
+                    );
+                    res.json({ status: true });
                 } else {
                     res.json({ status: false, error: "the post is not exist" });
-                }
-            })
-            .then(async (result) => {
-                console.log(result);
-                if (result) {
-                    // await Comment.update(
-                    //     { reply },
-                    //     {
-                    //         where: { id: commentId, postId, userId },
-                    //     }
-                    // );
                 }
             })
             .catch((e) => {
@@ -73,26 +66,24 @@ const commentController = {
     },
 
     delete: async (req, res) => {
-        const { userId, commentId, postId } = req.body;
+        const commentId = req.params.cmtId;
+        const { userId } = req.body;
 
         await Comment.findOne({
-            where: { id: commentId, postId, userId },
+            where: { id: commentId, userId },
         })
-            .then((result) => {
+            .then(async (result) => {
                 if (result) {
-                    return result;
+                    await Comment.destroy({
+                        where: { id: commentId, userId },
+                    });
+                    res.json({ status: true });
                 } else {
                     res.json({ status: false, error: "the post is not exist" });
                 }
             })
             .then(async (result) => {
-                console.log(result);
                 if (result) {
-                    // await Comment.delete(
-                    //     {
-                    //         where: { id: postId, userId },
-                    //     }
-                    // );
                 }
             })
             .catch((e) => {

@@ -18,7 +18,7 @@ function Navbar() {
                     className="mx-4 md:mx-[3.6rem] text-indigo-600 font-bold text-4xl cursor-pointer"
                     to="/"
                 >
-                    Veta
+                    Vstack
                 </Link>
             </div>
 

@@ -15,7 +15,7 @@ function Vote({ vote, post, setVote, role }) {
             });
             if (res.data.status) {
                 var notUserVoteList = post.vote.filter(
-                    (each) => each.userId != user.id
+                    (each) => each.userId !== user.id
                 );
                 var notUserVotePost = {
                     ...post,
