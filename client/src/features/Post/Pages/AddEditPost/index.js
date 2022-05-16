@@ -17,10 +17,10 @@ function AddEditPost({ setIsAddEditPost, content }) {
             if (res.data.status) {
                 setIsUploading(false);
                 const newPost = {
-                    id: res.data.id,
-                    ...data,
+                    ...res.data.post,
+                    comment: [],
+                    vote: [],
                     user,
-                    updatedAt: res.data.updatedAt,
                 };
                 const action = addNewPost(newPost);
                 dispatch(action);
@@ -46,12 +46,7 @@ function AddEditPost({ setIsAddEditPost, content }) {
                 };
                 const res = await postApi.update(updatedData);
                 if (res.data.status) {
-                    const updatedPost = {
-                        ...updatedData,
-                        updatedAt: content.initialValue.updatedAt,
-                        user,
-                    };
-                    const action = updatePost(updatedPost);
+                    const action = updatePost(res.data.post);
                     dispatch(action);
                     setIsAddEditPost(false);
                     setIsUploading(false);

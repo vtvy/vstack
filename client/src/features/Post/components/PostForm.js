@@ -19,6 +19,7 @@ function PostForm({ onSubmit, initialData, isUploading, type }) {
         watch,
         formState: { errors },
     } = useForm({ mode: "onChange" });
+
     const onSubmitForm = (data) => {
         if (isValid) {
             onSubmit(data);

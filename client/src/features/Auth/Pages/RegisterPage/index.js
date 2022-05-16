@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import axiosClient from "../../../../api/axiosClient";
 import RegisterForm from "../../components/RegisterForm";
 import { register } from "../../userSlice";
 
@@ -10,7 +9,6 @@ function RegisterPage() {
 
     const handleRegister = async (data) => {
         try {
-            console.log(data);
             const action = register(data);
             dispatch(action);
         } catch (err) {

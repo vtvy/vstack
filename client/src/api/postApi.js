@@ -19,6 +19,7 @@ const postApi = {
         });
         return res;
     },
+
     async getPostById(id) {
         const url = `/question/${id}`;
 
@@ -43,15 +44,12 @@ const postApi = {
         });
         return res;
     },
-    async setLove(postID) {
-        const url = `/question/love`;
-        const res = await axiosClient.put(
-            url,
-            { postID },
-            {
-                headers: { accessToken },
-            }
-        );
+
+    async setVote(data) {
+        const url = "/question/vote";
+        const res = await axiosClient.put(url, data, {
+            headers: { accessToken },
+        });
         return res;
     },
 };

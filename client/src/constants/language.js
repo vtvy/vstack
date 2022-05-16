@@ -1,3 +1,3 @@
 import { useSelector } from "react-redux";
-const languageList = ["html", "css", "javascript", "reactjs"];
+const languageList = ["javascript", "reactjs", "html", "css"];
 export default languageList;

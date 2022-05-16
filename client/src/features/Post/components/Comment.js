@@ -1,86 +1,81 @@
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import React, { useState } from "react";
 import Box from "../../../components/Box";
 import CommentForm from "./CommentForm";
-import CommentMenu from "./CommentMenu";
-function Comment({ comment, onClickReply, onEditComment, onDeleteComment }) {
-    const [isOpenCommentMenu, setIsOpenCommentMenu] = useState(false);
-    const [idEditComment, setIdEditComment] = useState("");
-    const [idTopZIndex, setIdTopZIndex] = useState("");
-
-    const handleClickReply = () => {
-        onClickReply(comment._id, comment.user);
-    };
-    const handleOpenCommentMenu = () => {
-        setIdTopZIndex(comment._id);
-        setIsOpenCommentMenu(!isOpenCommentMenu);
-    };
-
+function Comment({ comment, onEditComment, onDeleteComment }) {
+    const [isEditComment, setIsEditComment] = useState(false);
+    const user = useSelector((state) => state.user.current);
     const handleEditComment = (data) => {
-        setIdEditComment("");
-        onEditComment(data);
+        setIsEditComment(false);
+        if (data.reply !== comment.reply)
+            onEditComment({
+                ...data,
+                commentId: comment.id,
+            });
     };
+    const handleDeleteComment = (data) => {
+        const confirm = window.confirm(
+            "Are you sure you want to delete this post?"
+        );
+        if (confirm) {
+            onDeleteComment(comment.id);
+        }
+    };
+
     return (
-        <div className="dark:text-textColorDark">
-            {idEditComment === comment._id ? (
+        <div>
+            {isEditComment ? (
                 <>
                     <CommentForm
                         onSubmit={handleEditComment}
                         initialValue={comment}
-                        type={`editComment${comment._id}`}
                     />
                     <span
-                        className="ml-20 text-xl cursor-pointer hover:text-indigo-600 "
-                        onClick={() => setIdEditComment("")}
+                        className="bg-red-600 hover:bg-red-700 text-white cursor-pointer px-2 rounded-lg"
+                        onClick={() => setIsEditComment(false)}
                     >
                         Cancel
                     </span>
                 </>
             ) : (
-                <div
-                    className={`flex w-full relative ${
-                        idTopZIndex === comment._id ? "z-50" : "z-10"
-                    }`}
-                >
+                <div className="flex w-full relative">
                     <div className="flex flex-col flex-1 ml-4">
-                        <div
-                            className={`flex flex-col mb-4 max-w-[95%] items-start ${
-                                idTopZIndex === comment._id ? "z-50" : "z-10"
-                            } `}
-                        >
+                        <div className="flex flex-col mb-4 max-w-[95%] items-start">
                             <Box
                                 custom={`min-h-[4rem] rounded-[1.6rem] bg-[#F0F2F5] flex flex-col relative overflow-visible group dark:bg-[#BEDAFD]`}
                             >
-                                <span className="text-2xl text-black font-medium ">
-                                    {comment.user.name}
-                                </span>
-                                <span className="font-thin text-black">
-                                    {comment.commentText}
-                                </span>
-                                <span className="w-96 h-full top-0 absolute right-0 translate-x-full"></span>
-                                <div
-                                    className="absolute -right-12 w-10 h-10 hidden rounded-[50%] cursor-pointer  top-1/2 -translate-y-1/2 group-hover:flex hover:bg-slate-300 items-center justify-center"
-                                    onClick={handleOpenCommentMenu}
-                                >
-                                    <i className="fas fa-ellipsis-h"></i>
-                                    {isOpenCommentMenu && (
-                                        <CommentMenu
-                                            setIdEditComment={setIdEditComment}
-                                            commentId={comment._id}
-                                            onDelete={onDeleteComment}
-                                        />
-                                    )}
-                                </div>
-                            </Box>
-
-                            <div className="ml-4 text-xl space-x-4">
-                                <span className="cursor-pointer">Like</span>
-                                <span
+                                <Link
+                                    title={`${comment.user.username} Profile`}
+                                    to={`/profile/${comment.user.id}`}
                                     className="cursor-pointer"
-                                    onClick={handleClickReply}
                                 >
-                                    Reply
+                                    <span className="text-2xl text-black font-medium ">
+                                        {comment.user.username}
+                                    </span>
+                                </Link>
+                                <span className="font-thin text-black">
+                                    {comment.reply}
                                 </span>
-                            </div>
+                                {user.id === comment.user.id && (
+                                    <>
+                                        <div
+                                            className="absolute -right-12 w-10 h-10 rounded-[50%] cursor-pointer flex -translate-y-12 top-1/2 bg-slate-200 hover:bg-slate-300 items-center justify-center"
+                                            onClick={() =>
+                                                setIsEditComment(true)
+                                            }
+                                        >
+                                            <i className="fa-solid fa-pen-to-square"></i>
+                                        </div>
+                                        <div
+                                            className="absolute -right-12 w-10 h-10 rounded-[50%] cursor-pointer flex top-1/2  bg-slate-200 hover:bg-red-600 items-center justify-center"
+                                            onClick={handleDeleteComment}
+                                        >
+                                            <i className="fa-solid fa-x"></i>
+                                        </div>{" "}
+                                    </>
+                                )}
+                            </Box>
                         </div>
                     </div>
                 </div>

@@ -1,24 +1,68 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import postApi from "../../../api/postApi";
 import { updatePost } from "../postSlice";
 
-function Vote({ vote, post, role }) {
+function Vote({ vote, post, setVote, role }) {
     const dispatch = useDispatch();
+    const user = useSelector((state) => state.user.current);
 
     const handleVotePost = async () => {
-        //     try {
-        //         const res = await postApi.setLove(postID);
-        //         if (res.data.success) {
-        //             await socket.emit("likePost", res.data.lovedPost);
-        //             const action = updatePost(res.data.lovedPost);
-        //             dispatch(action);
-        //         } else console.log(res.data.message);
-        //     } catch (error) {
-        //         console.log(error);
-        //     }
+        try {
+            const res = await postApi.setVote({
+                vote: role,
+                postId: post.id,
+            });
+            if (res.data.status) {
+                var notUserVoteList = post.vote.filter(
+                    (each) => each.userId != user.id
+                );
+                var notUserVotePost = {
+                    ...post,
+                    vote: notUserVoteList,
+                };
+                if (res.data.vote === 0) {
+                    setVote(0);
+                    const action = updatePost(notUserVotePost);
+                    dispatch(action);
+                } else if (res.data.vote === 1) {
+                    setVote(1);
+                    let newVotedList = [
+                        ...notUserVotePost.vote,
+                        {
+                            userId: user.id,
+                            postId: post.id,
+                            upVote: true,
+                        },
+                    ];
+                    let newPost = {
+                        ...notUserVotePost,
+                        vote: newVotedList,
+                    };
+                    const action = updatePost(newPost);
+                    dispatch(action);
+                } else {
+                    setVote(-1);
+                    let newVotedList = [
+                        ...notUserVotePost.vote,
+                        {
+                            userId: user.id,
+                            postId: post.id,
+                            upVote: false,
+                        },
+                    ];
+                    let newPost = {
+                        ...post,
+                        vote: newVotedList,
+                    };
+                    const action = updatePost(newPost);
+                    dispatch(action);
+                }
+            } else alert(res.data.error);
+        } catch (error) {
+            console.log(error);
+        }
     };
-    <i class="fa-solid fa-up"></i>;
 
     return (
         <>

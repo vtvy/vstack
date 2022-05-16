@@ -31,16 +31,6 @@ const userApi = {
 
         return response;
     },
-    async getProfileByID(id) {
-        const accessToken = localStorage.getItem(StorageKeys.accessToken);
-        const url = `/post/user/${id}`;
-
-        const response = await axiosClient.get(url, {
-            headers: { accessToken },
-        });
-
-        return response;
-    },
 };
 
 export default userApi;

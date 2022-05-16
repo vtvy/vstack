@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import postApi from "../../../api/postApi";
-import { ModalContext, SocketContext } from "../../../App";
+import { ModalContext } from "../../../App";
 import Box from "../../../components/Box";
 import useClickOutside from "../../../Hooks/useClickOutside";
 import getDifferenceTime from "../../../myFunction/getDifferenceTime";
-import { addNewPost, deletePost, updatePost } from "../postSlice";
+import { deletePost } from "../postSlice";
 import Vote from "./Vote";
 import ListOfComments from "./ListOfComment";
 import PostMenu from "./PostMenu";
@@ -20,9 +21,9 @@ function PostCard({ post }) {
     const [isShowComment, setIsShowComment] = useState(false);
     const [refInside, isInside, setIsInside] = useClickOutside(false);
     const [voteState, setVoteState] = useState(0);
-    // const [numberOfComments, setNumberOfComments] = useState(
-    //     post.comments.length
-    // );
+    const [numberOfComments, setNumberOfComments] = useState(
+        post.comment.length
+    );
 
     //check vote state
     useEffect(() => {
@@ -31,29 +32,11 @@ function PostCard({ post }) {
                 if (eachVote.upVote) {
                     setVoteState(1);
                 } else {
-                    setVoteState(1);
+                    setVoteState(-1);
                 }
             }
         });
     }, [post, user, setVoteState]);
-
-    // // upvote
-    // useEffect(() => {
-    //     socket.on("likeToClient", (newPost) => {
-    //         const action = updatePost(newPost);
-    //         dispatch(action);
-    //     });
-
-    //     return () => socket.off("likeToClient");
-    // }, [socket, dispatch]);
-    // // unlike
-    // useEffect(() => {
-    //     socket.on("unLikeToClient", (newPost) => {
-    //         const action = addNewPost(newPost);
-    //         dispatch(action);
-    //     });
-    //     return () => socket.off("unLikeToClient");
-    // }, [socket, dispatch]);
 
     const setModal = useContext(ModalContext);
     useEffect(() => {
@@ -72,7 +55,7 @@ function PostCard({ post }) {
     const handleDeletePost = async () => {
         try {
             const res = await postApi.deletePostById(post.id);
-            if (res.data.success) {
+            if (res.data.status) {
                 const action = deletePost(post.id);
                 dispatch(action);
             }
@@ -88,27 +71,35 @@ function PostCard({ post }) {
                 <div className="flex flex-1 mb-6 items-center">
                     <div className="flex flex-1">
                         <div className="flex flex-col ml-4">
-                            <span className="text-red-500 dark:text-slate-300">
-                                {post.user.username}
-                            </span>
+                            <Link
+                                title={`${post.user.username} Profile`}
+                                to={`/profile/${post.user.id}`}
+                                className="cursor-pointer"
+                            >
+                                <span className="text-red-500 dark:text-slate-300">
+                                    {post.user.username}
+                                </span>
+                            </Link>
                             <span className="text-xl text-slate-700 dark:text-textColorDark">{`${differenceNumber} ${timeUnit} ago`}</span>
                         </div>
                     </div>
-                    <div
-                        ref={refInside}
-                        className="justify-self-end relative cursor-pointer"
-                        onClick={() => setIsInside(!isInside)}
-                    >
-                        <div className=" p-2  transition-all hover:bg-slate-200 flex justify-center items-center rounded-full dark:text-textColorDark">
-                            <i className="fa fa-ellipsis-h"></i>
+                    {post.user.id === user.id && (
+                        <div
+                            ref={refInside}
+                            className="justify-self-end relative cursor-pointer"
+                            onClick={() => setIsInside(!isInside)}
+                        >
+                            <div className=" p-2  transition-all hover:bg-slate-200 flex justify-center items-center rounded-full dark:text-textColorDark">
+                                <i className="fa fa-ellipsis-h"></i>
+                            </div>
+                            {isInside && (
+                                <PostMenu
+                                    setIsEditPost={setIsEditPost}
+                                    onDelete={handleDeletePost}
+                                />
+                            )}
                         </div>
-                        {isInside && (
-                            <PostMenu
-                                setIsEditPost={setIsEditPost}
-                                onDelete={handleDeletePost}
-                            />
-                        )}
-                    </div>
+                    )}
                 </div>
                 <div className="Code">
                     <h2 className="ml-2 font-semibold">
@@ -130,9 +121,9 @@ function PostCard({ post }) {
                                 0
                             )}
                         </span>
-                        Votes
+                        Score
                     </span>
-                    {/* {numberOfComments > 0 && (
+                    {numberOfComments >= 0 && (
                         <span
                             onClick={() => setIsShowComment(!isShowComment)}
                             className="hover:underline decoration-[0.5px] cursor-pointer text-slate-600 dark:text-textColorDark"
@@ -140,13 +131,23 @@ function PostCard({ post }) {
                             <span className="text-indigo-600 ">
                                 {numberOfComments}
                             </span>
-                            {numberOfComments > 1 ? "	Comments" : " Comment"}
+                            {numberOfComments > 1 ? " Comments" : " Comment"}
                         </span>
-                    )} */}
+                    )}
                 </div>
                 <div className="flex flex-1 justify-between pt-2  border-t border-solid border-slate-300">
-                    <Vote vote={voteState} post={post} role={1} />
-                    <Vote vote={voteState} post={post} role={-1} />
+                    <Vote
+                        vote={voteState}
+                        post={post}
+                        setVote={setVoteState}
+                        role={1}
+                    />
+                    <Vote
+                        vote={voteState}
+                        post={post}
+                        setVote={setVoteState}
+                        role={-1}
+                    />
                     <div
                         className="cursor-pointer flex-1 text-center rounded-lg p-2 hover:bg-slate-200 dark:hover:bg-indigo-1050 relative dark:text-textColorDark"
                         onClick={() => setIsShowComment(!isShowComment)}
@@ -154,16 +155,15 @@ function PostCard({ post }) {
                         <i className="far fa-comment-alt  "></i> Comment
                     </div>
                 </div>
-                {/* {isShowComment && (
+                {isShowComment && (
                     <div className="border-t w-full border-solid border-slate-300 pt-4 mt-2">
                         <ListOfComments
                             type="comment"
-                            postID={post._id}
+                            postId={post.id}
                             setNumberOfComments={setNumberOfComments}
-                            post={post}
                         />
                     </div>
-                )} */}
+                )}
             </Box>
         </>
     );

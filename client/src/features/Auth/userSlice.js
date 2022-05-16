@@ -9,7 +9,6 @@ export const register = createAsyncThunk("user/register", async (payload) => {
             localStorage.setItem(StorageKeys.accessToken, res.data.token);
             const resUser = await userApi.getUser();
             const user = resUser.data.user;
-
             return { user, isLoggedIn: true };
         } else {
             alert(res.data.error);
@@ -24,7 +23,6 @@ export const login = createAsyncThunk("user/login", async (payload) => {
     try {
         const res = await userApi.login(payload);
         if (res.data.status) {
-            console.log(res.data);
             localStorage.setItem(StorageKeys.accessToken, res.data.token);
             const resUser = await userApi.getUser();
             const user = resUser.data.user;
@@ -60,9 +58,11 @@ const userSlice = createSlice({
             if (root.classList.contains("dark")) root.classList.remove("dark");
         },
     },
+
     extraReducers: {
         [register.fulfilled]: (state, action) => {
             state.current = action.payload.user;
+            state.isLoggedIn = action.payload.isLoggedIn;
         },
         [login.fulfilled]: (state, action) => {
             state.current = action.payload.user;

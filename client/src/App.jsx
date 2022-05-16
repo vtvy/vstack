@@ -52,13 +52,7 @@ function App() {
     return (
         <ModalContext.Provider value={setModal}>
             <div className="App flex flex-col min-h-screen h-full bg-slate-300 dark:bg-indigo-1050 scrollbar">
-                {isLoggedIn && (
-                    <>
-                        <ThemeContext.Provider value={toggleDarkMode}>
-                            <Header />
-                        </ThemeContext.Provider>
-                    </>
-                )}
+                {isLoggedIn && <Header />}
 
                 {/* modal */}
                 {modal.isOpen && (

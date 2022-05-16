@@ -1,17 +1,5 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import postApi from "../../api/postApi";
+import { createSlice } from "@reduxjs/toolkit";
 import compareDate from "../../myFunction/compareDate";
-
-export const createPost = createAsyncThunk("posts/create", async (payload) => {
-    try {
-        const res = await postApi.create(payload);
-        if (res.data.status) {
-            console.log(res);
-        } else console.log(res);
-    } catch (error) {
-        console.log(error);
-    }
-});
 
 const postSlice = createSlice({
     name: "post",
@@ -31,13 +19,13 @@ const postSlice = createSlice({
         },
         deletePost: (state, action) => {
             state.postList = state.postList.filter(
-                (post) => post._id !== action.payload
+                (post) => post.id !== action.payload
             );
             return state;
         },
         updatePost: (state, action) => {
             const indexOfPostUpdate = state.postList.findIndex(
-                (post) => post._id === action.payload._id
+                (post) => post.id === action.payload.id
             );
             state.postList[indexOfPostUpdate] = action.payload;
         },
