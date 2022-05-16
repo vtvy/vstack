@@ -34,7 +34,7 @@ db.comments = require("./comment.js")(sequelize, DataTypes);
 db.votes = require("./vote.js")(sequelize, DataTypes);
 
 db.sequelize.sync({ force: false }).then(() => {
-    console.log("yes re-sync done!");
+    console.log("database sync done!");
 });
 
 // user and post
