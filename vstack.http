@@ -1,0 +1,47 @@
+### Sign up
+POST http://localhost:5000/user/signup 
+content-type: application/json
+
+{
+    "username": "votrieuvy",
+    "passwd": "test"
+}
+### Login
+POST http://localhost:5000/user/login 
+content-type: application/json
+
+{
+    "username": "votrieuvy",
+    "passwd": "test"
+}
+
+### Change password
+POST http://localhost:5000/user/change
+content-type: application/json
+
+{
+    "username": "votrieuvy",
+    "passwd": "test",
+    "newPasswd": "test1"
+}
+
+### Create post
+POST http://localhost:5000/question/create 
+content-type: application/json
+vstack: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjUyNTMzNzYyfQ.UXk1K5BdwrIQEvXykwH53Wjl8lsQyHtCEjfgDmuGUPY
+
+{
+    "question": "const vstack = express();",
+    "language": "javascript"
+}
+
+### Show all posts
+GET http://localhost:5000/question 
+content-type: application/json
+vstack: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjUyNTMzNzYyfQ.UXk1K5BdwrIQEvXykwH53Wjl8lsQyHtCEjfgDmuGUPY
+
+### Show a post
+GET http://localhost:5000/question/1
+content-type: application/json
+vstack: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjUyNTMzNzYyfQ.UXk1K5BdwrIQEvXykwH53Wjl8lsQyHtCEjfgDmuGUPY
+

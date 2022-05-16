@@ -156,49 +156,49 @@ const userController = {
             });
     },
 
-    // update: async (req, res) => {
-    //     const { userId, passwd, newPasswd } = req.body;
-    //     await User.findByPk(userId)
-    //         .then((result) => {
-    //             if (result) {
-    //                 const match = bcrypt.compareSync(
-    //                     passwd,
-    //                     result.dataValues.password
-    //                 );
-    //                 return match;
-    //             } else {
-    //                 res.json({
-    //                     status: false,
-    //                     error: "wrong username or password",
-    //                 });
-    //             }
-    //         })
-    //         .then(async (match) => {
-    //             if (match) {
-    //                 const password = bcrypt.hashSync(newPasswd, saltRounds);
-    //                 const changeResult = await User.update(
-    //                     { password },
-    //                     {
-    //                         where: {
-    //                             id: userId,
-    //                         },
-    //                     }
-    //                 );
-    //                 return changeResult;
-    //             } else {
-    //                 res.json({
-    //                     status: false,
-    //                     error: "wrong username or password",
-    //                 });
-    //             }
-    //         })
-    //         .then(() => {
-    //             res.json({ status: true });
-    //         })
-    //         .catch((e) => {
-    //             res.json({ status: false, error: "username is invalid" });
-    //         });
-    // },
+    update: async (req, res) => {
+        const { userId, passwd, newPasswd } = req.body;
+        await User.findByPk(userId)
+            .then((result) => {
+                if (result) {
+                    const match = bcrypt.compareSync(
+                        passwd,
+                        result.dataValues.password
+                    );
+                    return match;
+                } else {
+                    res.json({
+                        status: false,
+                        error: "wrong username or password",
+                    });
+                }
+            })
+            .then(async (match) => {
+                if (match) {
+                    const password = bcrypt.hashSync(newPasswd, saltRounds);
+                    const changeResult = await User.update(
+                        { password },
+                        {
+                            where: {
+                                id: userId,
+                            },
+                        }
+                    );
+                    return changeResult;
+                } else {
+                    res.json({
+                        status: false,
+                        error: "wrong username or password",
+                    });
+                }
+            })
+            .then(() => {
+                res.json({ status: true });
+            })
+            .catch((e) => {
+                res.json({ status: false, error: "username is invalid" });
+            });
+    },
 };
 
 module.exports = userController;
